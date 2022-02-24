@@ -1,0 +1,6 @@
+.pgdata
+.idea
+.gradle
+build/
+**/out/
+**/build/

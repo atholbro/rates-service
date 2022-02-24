@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  db:
+    container_name: db
+    image: postgres:14.1-alpine
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rates_service"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 3s
+    restart: always
+    volumes:
+      - ./norm/docker/init:/docker-entrypoint-initdb.d
+      - ./.pgdata:/var/lib/postgresql/data
+    ports:
+      - "15432:5432"
+    env_file:
+      - ./test.env
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES="test"
+      - POSTGRES_PORT=5432
+
+  flyway_rates_service:
+      image: flyway/flyway
+      command: -url=jdbc:postgresql://db/rates_service -user=rates_service -password=password migrate
+      volumes:
+        - ./db/sql:/flyway/sql
+      depends_on:
+        - db
+      environment:
+          - FLYWAY_CONNECT_RETRIES=10
+          - FLYWAY_CONNECT_RETRIES_INTERVAL=2
+
+  flyway_test:
+      image: flyway/flyway
+      command: -url=jdbc:postgresql://db/test -user=test -password=password migrate
+      volumes:
+          - ./norm/sql:/flyway/sql
+      depends_on:
+          - db
+      environment:
+          - FLYWAY_CONNECT_RETRIES=10
+          - FLYWAY_CONNECT_RETRIES_INTERVAL=2
