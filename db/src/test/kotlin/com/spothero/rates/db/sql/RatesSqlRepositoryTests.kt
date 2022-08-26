@@ -100,7 +100,7 @@ class RatesServiceSqlDbTest {
         @Test
         fun `can find multiple rates`(): Unit = TestData.use { data ->
             // Add another rate that starts and ends within the existing rate.
-            val other = with (data.rate) {
+            val other = with(data.rate) {
                 copy(
                     start = start.plusHours(1),
                     end = end.minusHours(1),

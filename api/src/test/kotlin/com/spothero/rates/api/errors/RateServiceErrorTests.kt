@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 class RateServiceErrorTests {
     @Test
     fun `UnavailableRate is correctly mapped to 404`() {
-        with (RateServiceError(UnavailableRate)) {
+        with(RateServiceError(UnavailableRate)) {
             this.toString() shouldBe "unavailable"
             this.status shouldBe HttpStatusCode.NotFound
         }
@@ -19,7 +19,7 @@ class RateServiceErrorTests {
 
     @Test
     fun `EndBeforeStart is correctly mapped to HTTP 400`() {
-        with (RateServiceError(EndBeforeStart)) {
+        with(RateServiceError(EndBeforeStart)) {
             this.toString() shouldBe "unavailable"
             this.status shouldBe HttpStatusCode.BadRequest
         }
@@ -27,7 +27,7 @@ class RateServiceErrorTests {
 
     @Test
     fun `Generic errors aare correctly mapped to HTTP 500`() {
-        with (RateServiceError(DatabaseError(NoResults))) {
+        with(RateServiceError(DatabaseError(NoResults))) {
             this.toString() shouldBe NoResults.toString()
             this.status shouldBe HttpStatusCode.InternalServerError
         }

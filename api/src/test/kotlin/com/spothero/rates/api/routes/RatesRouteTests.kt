@@ -37,7 +37,7 @@ class RatesRouteTests {
     @Test
     fun `get rates`(): Unit = withTestApplication(Application::module) {
         // inject rate
-        with (TestApplication.instance.mockRatesRepository) {
+        with(TestApplication.instance.mockRatesRepository) {
             rates[MockRatesData.rate.id] = MockRatesData.rate
         }
 
@@ -51,7 +51,7 @@ class RatesRouteTests {
     @Test
     fun `get handles errors correctly`(): Unit = withTestApplication(Application::module) {
         // inject rate
-        with (TestApplication.instance.mockRatesRepository) {
+        with(TestApplication.instance.mockRatesRepository) {
             getAllError = NoResults
         }
 
@@ -62,10 +62,12 @@ class RatesRouteTests {
 
     @Test
     fun `replace rates`(): Unit = withTestApplication(Application::module) {
-        with (handleRequest(HttpMethod.Put, "/rates") {
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody(RATES)
-        }) {
+        with(
+            handleRequest(HttpMethod.Put, "/rates") {
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody(RATES)
+            }
+        ) {
             response.status() shouldBe HttpStatusCode.OK
             response.contentType().contentType shouldBe ContentType.Application.Json.contentType
             response.content shouldBe RATES
@@ -74,10 +76,12 @@ class RatesRouteTests {
 
     @Test
     fun `replace rates handles errors correctly`(): Unit = withTestApplication(Application::module) {
-        with (handleRequest(HttpMethod.Put, "/rates") {
-            addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
-            setBody("""{invalidjson}""")
-        }) {
+        with(
+            handleRequest(HttpMethod.Put, "/rates") {
+                addHeader(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                setBody("""{invalidjson}""")
+            }
+        ) {
             response.status() shouldBe HttpStatusCode.BadRequest
         }
     }

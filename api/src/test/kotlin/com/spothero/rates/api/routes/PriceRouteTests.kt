@@ -32,7 +32,7 @@ class PriceRouteTests {
     @Test
     fun `get price`(): Unit = withTestApplication(Application::module) {
         // inject rate
-        with (TestApplication.instance.mockRatesRepository) {
+        with(TestApplication.instance.mockRatesRepository) {
             rates[MockRatesData.rate.id] = MockRatesData.rate
         }
 

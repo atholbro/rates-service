@@ -5,7 +5,6 @@ import com.github.michaelbull.result.expectError
 import io.kotest.matchers.shouldBe
 import kotlinx.serialization.SerializationException
 import org.junit.jupiter.api.Test
-import java.io.File
 import java.io.IOException
 
 class RatesLoaderTests {

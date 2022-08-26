@@ -52,7 +52,7 @@ class SerdeTests {
         val rates = Json.decodeFromString<ApiRates>(RATE_JSON)
         rates.rates.size shouldBe 1
 
-        with (rates.toService()[0]) {
+        with(rates.toService()[0]) {
             // order is not fixed, so can't check day
             start shouldBe rate.start
             end shouldBe rate.end

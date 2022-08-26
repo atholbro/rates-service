@@ -6,7 +6,6 @@ import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.binding
 import com.github.michaelbull.result.mapBoth
 import com.github.michaelbull.result.mapError
-import com.spothero.rates.api.RatesApplication.Companion.instance as app
 import com.spothero.rates.api.errors.DateTimeParseError
 import com.spothero.rates.api.errors.RateServiceError
 import com.spothero.rates.api.model.ApiError
@@ -21,6 +20,7 @@ import io.ktor.routing.routing
 import io.ktor.util.pipeline.PipelineContext
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
+import com.spothero.rates.api.RatesApplication.Companion.instance as app
 
 private val formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
 
