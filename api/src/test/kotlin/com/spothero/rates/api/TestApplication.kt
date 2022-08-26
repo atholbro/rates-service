@@ -1,6 +1,7 @@
 package com.spothero.rates.api
 
 import com.spothero.rates.core.RatesService
+import com.spothero.rates.core.StartupService
 import com.spothero.rates.db.mock.RatesServiceMockDb
 import com.spothero.rates.db.repositories.mock.RatesMockRepository
 
@@ -11,9 +12,8 @@ class TestApplication : RatesApplication {
     private val db = RatesServiceMockDb()
     val mockRatesRepository get() = (db.rates as RatesMockRepository)
 
-    override val ratesService by lazy {
-        RatesService(db)
-    }
+    override val ratesService by lazy { RatesService(db) }
+    override val startupService by lazy { StartupService(db) }
 
     companion object {
         val instance = (RatesApplication.instance as TestApplication)

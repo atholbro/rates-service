@@ -90,12 +90,4 @@ class RatesService(
             .andThen { firstRateOrUnavailable(it) }
             // Convert DB NoResults to UnavailableRate
             .mapError(::mapLookupErrors)
-
-    companion object {
-        /**
-         * Create a production RatesService using the default SQL database.
-         * @return RatesService for use in production.
-         */
-        fun default(): RatesService = RatesService()
-    }
 }

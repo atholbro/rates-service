@@ -34,6 +34,9 @@ class Main : CliktCommand() {
         .default(5000)
 
     override fun run(): Unit = runBlocking {
+        // Wait for DB to be ready:
+        app.startupService.waitForDb()
+
         // Init Application with defaults (real RateService):
         // Parse rates file:
         ratesFile.use { stream ->

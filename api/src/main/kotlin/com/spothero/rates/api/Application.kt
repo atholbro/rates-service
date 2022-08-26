@@ -10,6 +10,9 @@ import com.spothero.rates.api.routes.priceModule
 import com.spothero.rates.api.routes.ratesModule
 import com.spothero.rates.core.RatesService
 import com.spothero.rates.core.RatesServiceError
+import com.spothero.rates.core.StartupService
+import com.spothero.rates.db.RatesServiceDb
+import com.spothero.rates.db.sql.RatesServiceSqlDb
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
@@ -18,6 +21,7 @@ import java.util.ServiceLoader
 
 interface RatesApplication {
     val ratesService: RatesService
+    val startupService: StartupService
 
     suspend fun setInitialRates(rates: ApiRates): Result<Int, RatesServiceError> =
         // Convert to service format:
@@ -38,7 +42,10 @@ interface RatesApplication {
 }
 
 class DefaultRatesApplication : RatesApplication {
-    override val ratesService by lazy { RatesService.default() }
+    private val db: RatesServiceDb = RatesServiceSqlDb()
+
+    override val ratesService by lazy { RatesService(db) }
+    override val startupService by lazy { StartupService(db) }
 }
 
 fun Application.module() {

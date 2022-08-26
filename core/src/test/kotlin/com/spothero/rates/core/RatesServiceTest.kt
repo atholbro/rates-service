@@ -6,7 +6,6 @@ import com.spothero.rates.db.MockRatesData
 import com.spothero.rates.db.mock.RatesServiceMockDb
 import com.spothero.rates.db.repositories.mock.RatesMockRepository
 import com.spothero.rates.db.shouldBeEquivalentTo
-import io.kotest.assertions.throwables.shouldNotThrow
 import io.kotest.matchers.shouldBe
 import kotlinx.coroutines.runBlocking
 import net.aholbrook.norm.NoResults
@@ -28,13 +27,6 @@ class RatesServiceTest {
     @BeforeEach
     fun beforeEach() {
         mockRepo.reset()
-    }
-
-    @Test
-    fun `can get default instance`() {
-        shouldNotThrow<Throwable> {
-            RatesService.default()
-        }
     }
 
     @Nested
