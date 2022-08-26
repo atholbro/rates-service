@@ -1,8 +1,15 @@
 package net.aholbrook.norm
 
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.coroutines.runSuspendCatching
+import com.github.michaelbull.result.mapError
 import kotlin.reflect.KClass
 
 sealed interface DbError
+
+class DatabaseException(val cause: Throwable) : DbError {
+    override fun toString() = cause.localizedMessage
+}
 
 object NoResults : DbError {
     override fun toString() = "No results"
@@ -32,3 +39,7 @@ class ColumnWrongType(
 ) : ColumnMappingError(column) {
     override fun toString() = "column \"$column\" expected $expectedType but found $actualType"
 }
+
+suspend fun <T> mapDatabaseExceptions(block: suspend () -> T): Result<T, DbError> =
+    runSuspendCatching { block() }
+        .mapError { DatabaseException(it) }

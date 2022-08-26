@@ -2,10 +2,12 @@ package net.aholbrook.norm.repositories.sql
 
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.coroutines.binding.binding
 import net.aholbrook.norm.DbError
 import net.aholbrook.norm.Key
 import net.aholbrook.norm.Table
+import net.aholbrook.norm.mapDatabaseExceptions
 import net.aholbrook.norm.repositories.base.MutableRepository
 import net.aholbrook.norm.sql.Connection
 import net.aholbrook.norm.sql.escaped
@@ -51,30 +53,36 @@ abstract class SqlMutableRepository<Entity, PrimaryKey : Key>(
         "DELETE FROM ${table.fqn};"
     }
 
-    override suspend fun insert(entity: Entity): Result<Entity, DbError> {
-        val result = connection.sendPreparedStatement(
-            query = insertQuery,
-            values = table.entityEncoder(entity),
-            release = false,
-        )
-
-        return result.rows.mapExactlyOneRow { table.entityDecoder(it, "") }
-    }
+    override suspend fun insert(entity: Entity): Result<Entity, DbError> =
+        mapDatabaseExceptions {
+            connection.sendPreparedStatement(
+                query = insertQuery,
+                values = table.entityEncoder(entity),
+                release = false,
+            )
+        }.andThen { result ->
+            result.rows.mapExactlyOneRow { table.entityDecoder(it, "") }
+        }
 
     override suspend fun insertAll(entities: List<Entity>): Result<List<Entity>, DbError> {
         return connection.inTransaction { db ->
-
             return@inTransaction binding<List<Entity>, DbError> {
                 val results = mutableListOf<Entity>()
 
                 entities.forEach { entity ->
-                    val result = db.sendPreparedStatement(
-                        query = insertQuery,
-                        values = table.entityEncoder(entity),
-                        release = false,
+                    results.add(
+                        mapDatabaseExceptions {
+                            db.sendPreparedStatement(
+                                query = insertQuery,
+                                values = table.entityEncoder(entity),
+                                release = false,
+                            )
+                        }
+                            .andThen { result ->
+                                result.rows.mapExactlyOneRow { table.entityDecoder(it, "") }
+                            }
+                            .bind()
                     )
-
-                    results.add(result.rows.mapExactlyOneRow { table.entityDecoder(it, "") }.bind())
                 }
 
                 results
@@ -82,33 +90,36 @@ abstract class SqlMutableRepository<Entity, PrimaryKey : Key>(
         }
     }
 
-    override suspend fun update(entity: Entity): Result<Entity, DbError> {
-        val result = connection.sendPreparedStatement(
-            query = updateQuery,
-            values = table.entityEncoder(entity) + pk(entity).toList(),
-            release = false,
-        )
+    override suspend fun update(entity: Entity): Result<Entity, DbError> =
+        mapDatabaseExceptions {
+            connection.sendPreparedStatement(
+                query = updateQuery,
+                values = table.entityEncoder(entity) + pk(entity).toList(),
+                release = false,
+            )
+        }.andThen { result ->
+            result.rows.mapExactlyOneRow { table.entityDecoder(it, "") }
+        }
 
-        return result.rows.mapExactlyOneRow { table.entityDecoder(it, "") }
-    }
+    override suspend fun delete(pk: PrimaryKey): Result<Entity, DbError> =
+        mapDatabaseExceptions {
+            connection.sendPreparedStatement(
+                query = deleteQuery,
+                values = pk.toList(),
+                release = false,
+            )
+        }.andThen { result ->
+            result.rows.mapExactlyOneRow { table.entityDecoder(it, "") }
+        }
 
-    override suspend fun delete(pk: PrimaryKey): Result<Entity, DbError> {
-        val result = connection.sendPreparedStatement(
-            query = deleteQuery,
-            values = pk.toList(),
-            release = false,
-        )
-
-        return result.rows.mapExactlyOneRow { table.entityDecoder(it, "") }
-    }
-
-    override suspend fun clear(): Result<Long, DbError> {
-        val result = connection.sendPreparedStatement(
-            query = clearQuery,
-            values = listOf(),
-            release = false,
-        )
-
-        return Ok(result.rowsAffected)
-    }
+    override suspend fun clear(): Result<Long, DbError> =
+        mapDatabaseExceptions {
+            connection.sendPreparedStatement(
+                query = clearQuery,
+                values = listOf(),
+                release = false,
+            )
+        }.andThen { result ->
+            Ok(result.rowsAffected)
+        }
 }

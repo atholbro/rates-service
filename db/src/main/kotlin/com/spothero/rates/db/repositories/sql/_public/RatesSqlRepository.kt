@@ -1,10 +1,12 @@
 package com.spothero.rates.db.repositories.sql._public
 
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.andThen
 import com.spothero.rates.db.models.Rate
 import com.spothero.rates.db.repositories.base._public.RateKey
 import com.spothero.rates.db.repositories.base._public.RatesRepository
 import net.aholbrook.norm.DbError
+import net.aholbrook.norm.mapDatabaseExceptions
 import net.aholbrook.norm.repositories.sql.SqlMutableRepository
 import net.aholbrook.norm.sql.Connection
 import net.aholbrook.norm.sql.mapRows
@@ -20,7 +22,7 @@ class RatesSqlRepository(
     override suspend fun findRates(
         start: OffsetDateTime,
         end: OffsetDateTime,
-    ): Result<List<Rate>, DbError> {
+    ): Result<List<Rate>, DbError> = mapDatabaseExceptions {
         /*
             Finds all rates which contain the specified start/end time.
 
@@ -69,12 +71,12 @@ class RatesSqlRepository(
                 AND input.query_end_midnight + input."end" >= input.query_end;
         """.trimIndent()
 
-        val result = connection.sendPreparedStatement(
+        connection.sendPreparedStatement(
             query = sql,
             values = listOf(start, end),
             release = false,
         )
-
-        return result.rows.mapRows { table.entityDecoder(it, "") }
+    }.andThen { result ->
+        result.rows.mapRows { table.entityDecoder(it, "") }
     }
 }

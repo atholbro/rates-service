@@ -1,8 +1,10 @@
 package net.aholbrook.norm.repositories.sql
 
 import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.andThen
 import net.aholbrook.norm.DbError
 import net.aholbrook.norm.Table
+import net.aholbrook.norm.mapDatabaseExceptions
 import net.aholbrook.norm.repositories.base.Repository
 import net.aholbrook.norm.sql.Connection
 import net.aholbrook.norm.sql.fqn
@@ -17,12 +19,13 @@ abstract class SqlRepository<Entity>(
         FROM ${table.fqn}
     """.trimIndent()
 
-    override suspend fun getAll(): Result<List<Entity>, DbError> {
-        val result = connection.sendPreparedStatement(
-            query = getAllQuery,
-            release = false,
-        )
-
-        return result.rows.mapRows { table.entityDecoder(it, "") }
-    }
+    override suspend fun getAll(): Result<List<Entity>, DbError> =
+        mapDatabaseExceptions {
+            connection.sendPreparedStatement(
+                query = getAllQuery,
+                release = false,
+            )
+        }.andThen { result ->
+            result.rows.mapRows { table.entityDecoder(it, "") }
+        }
 }
