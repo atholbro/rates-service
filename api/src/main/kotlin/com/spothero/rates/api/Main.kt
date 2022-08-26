@@ -11,7 +11,7 @@ import com.github.ajalt.clikt.parameters.types.int
 import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.mapBoth
 import com.spothero.rates.api.util.parseRates
-import io.ktor.application.Application
+import io.ktor.server.application.Application
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import kotlinx.coroutines.runBlocking

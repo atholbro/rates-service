@@ -32,14 +32,14 @@ allprojects {
     dependencies {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0")
 
-        testImplementation("io.kotest:kotest-assertions-core:5.1.0")
-        testFixturesImplementation("io.kotest:kotest-assertions-core:5.1.0")
+        testImplementation("io.kotest:kotest-assertions-core:5.4.2")
+        testFixturesImplementation("io.kotest:kotest-assertions-core:5.4.2")
 
-        testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-        testImplementation("org.junit.jupiter:junit-jupiter-params:5.8.2")
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.9.0")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.0")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
 
-        testImplementation("ch.qos.logback:logback-classic:1.2.10")
+        testImplementation("ch.qos.logback:logback-classic:1.2.11")
     }
 
     tasks {
