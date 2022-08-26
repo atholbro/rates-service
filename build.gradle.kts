@@ -7,7 +7,7 @@ plugins {
 
     id("org.jetbrains.kotlin.jvm") version "1.6.0"
 
-    id("org.jlleitschuh.gradle.ktlint").version("10.2.0")
+    id("org.jmailen.kotlinter") version "3.11.0"
 }
 
 buildscript {
@@ -22,7 +22,7 @@ allprojects {
     version = "1.0-SNAPSHOT"
 
     apply(plugin = "java")
-    apply(plugin = "org.jlleitschuh.gradle.ktlint")
+    apply(plugin = "org.jmailen.kotlinter")
     apply(plugin = "java-test-fixtures")
 
     repositories {
@@ -60,8 +60,7 @@ allprojects {
         }
     }
 
-    configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-        version.set("0.43.0")
-        verbose.set(true)
+    kotlinter {
+        disabledRules = arrayOf("trailing-comma") // seems broken, is set correctly in .editorconfig but ignored
     }
 }
