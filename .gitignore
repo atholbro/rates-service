@@ -1,6 +1,7 @@
 .pgdata
 .idea
 .gradle
+.gradle-cache
 build/
 **/out/
 **/build/

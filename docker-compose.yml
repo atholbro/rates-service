@@ -22,23 +22,60 @@ services:
       - POSTGRES_PORT=5432
 
   flyway_rates_service:
-      image: flyway/flyway
-      command: -url=jdbc:postgresql://db/rates_service -user=rates_service -password=password migrate
-      volumes:
-        - ./db/sql:/flyway/sql
-      depends_on:
-        - db
-      environment:
-          - FLYWAY_CONNECT_RETRIES=10
-          - FLYWAY_CONNECT_RETRIES_INTERVAL=2
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://db/rates_service -user=rates_service -password=password migrate
+    volumes:
+      - ./db/sql:/flyway/sql
+    depends_on:
+      - db
+    environment:
+        - FLYWAY_CONNECT_RETRIES=10
+        - FLYWAY_CONNECT_RETRIES_INTERVAL=2
 
   flyway_test:
-      image: flyway/flyway
-      command: -url=jdbc:postgresql://db/test -user=test -password=password migrate
-      volumes:
-          - ./norm/sql:/flyway/sql
-      depends_on:
-          - db
-      environment:
-          - FLYWAY_CONNECT_RETRIES=10
-          - FLYWAY_CONNECT_RETRIES_INTERVAL=2
+    image: flyway/flyway
+    command: -url=jdbc:postgresql://db/test -user=test -password=password migrate
+    volumes:
+      - ./norm/sql:/flyway/sql
+    depends_on:
+      - db
+    environment:
+      - FLYWAY_CONNECT_RETRIES=10
+      - FLYWAY_CONNECT_RETRIES_INTERVAL=2
+
+  test:
+    build:
+      context: .
+      target: builder
+    image: rates-service-builder:latest
+    profiles: ["test"]
+    command: bash -c "cd /root/src && ./gradlew test"
+    volumes:
+      - .gradle-cache:/root/.gradle # gradle cache
+      - ./:/root/src
+    depends_on:
+      - db
+      - flyway_test
+    env_file:
+      - ./test.env
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+      - NORM_POSTGRES_HOST=db
+      - NORM_POSTGRES_PORT=5432
+
+  rates-service:
+    build:
+      context: .
+      target: rates-service
+    image: rates-service:latest
+    depends_on:
+      - db
+      - flyway_rates_service
+    env_file:
+      - ./test.env
+    environment:
+      - POSTGRES_HOST=db
+      - POSTGRES_PORT=5432
+    ports:
+      - "5001:5000"
