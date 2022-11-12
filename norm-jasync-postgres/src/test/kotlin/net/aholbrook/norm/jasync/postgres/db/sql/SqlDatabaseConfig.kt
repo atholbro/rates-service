@@ -1,3 +1,4 @@
+/* ktlint-disable filename */
 package net.aholbrook.norm.jasync.postgres.db.sql
 
 import net.aholbrook.norm.sql.SqlDatabaseConfig

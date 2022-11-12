@@ -21,7 +21,7 @@ class StartupService(
 
             if (result) {
                 logger.info {
-                    "No database connection (${error.toString()}), waiting ${timeMillis}ms."
+                    "No database connection ($error), waiting ${timeMillis}ms."
                 }
 
                 delay(timeMillis)

@@ -17,7 +17,9 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.util.UUID
 
+/* ktlint-disable max-line-length */
 const val RATE_JSON = """{"rates":[{"days":"thurs,tues,fri,mon,sun,wed,sat","times":"0830-1725","tz":"America/Toronto","price":132}]}"""
+/* ktlint-enable max-line-length */
 
 val rate = Rate(
     rateGroup = UUID.fromString("00000000-0000-0000-0000-000000000001"),

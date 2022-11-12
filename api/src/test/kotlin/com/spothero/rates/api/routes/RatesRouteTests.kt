@@ -4,11 +4,11 @@ import com.spothero.rates.api.TestApplication
 import com.spothero.rates.api.module
 import com.spothero.rates.db.MockRatesData
 import io.kotest.matchers.shouldBe
-import io.ktor.application.Application
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.Application
 import io.ktor.server.testing.contentType
 import io.ktor.server.testing.handleRequest
 import io.ktor.server.testing.setBody

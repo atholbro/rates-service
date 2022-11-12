@@ -5,7 +5,7 @@ plugins {
     java
     `java-test-fixtures`
 
-    id("org.jetbrains.kotlin.jvm") version "1.6.0"
+    id("org.jetbrains.kotlin.jvm") version "1.7.10"
 
     id("org.jmailen.kotlinter") version "3.11.0"
 }
@@ -30,7 +30,7 @@ allprojects {
     }
 
     dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.6.0")
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.10")
 
         testImplementation("io.kotest:kotest-assertions-core:5.4.2")
         testFixturesImplementation("io.kotest:kotest-assertions-core:5.4.2")

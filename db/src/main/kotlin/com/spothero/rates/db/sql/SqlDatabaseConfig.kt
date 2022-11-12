@@ -1,3 +1,4 @@
+/* ktlint-disable filename */
 package com.spothero.rates.db.sql
 
 import net.aholbrook.norm.sql.SqlDatabaseConfig

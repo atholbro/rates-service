@@ -1,10 +1,10 @@
-package com.spothero.rates.db.repositories.sql._public
+package com.spothero.rates.db.repositories.sql.public
 
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.andThen
 import com.spothero.rates.db.models.Rate
-import com.spothero.rates.db.repositories.base._public.RateKey
-import com.spothero.rates.db.repositories.base._public.RatesRepository
+import com.spothero.rates.db.repositories.base.public.RateKey
+import com.spothero.rates.db.repositories.base.public.RatesRepository
 import net.aholbrook.norm.DbError
 import net.aholbrook.norm.mapDatabaseExceptions
 import net.aholbrook.norm.repositories.sql.SqlMutableRepository
@@ -71,8 +71,8 @@ class RatesSqlRepository(
                 AND input.query_end_midnight + input."end" >= input.query_end;
         """.trimIndent()
 
-        connection.sendPreparedStatement(
-            query = sql,
+        connection.query(
+            sql = sql,
             values = listOf(start, end),
             release = false,
         )

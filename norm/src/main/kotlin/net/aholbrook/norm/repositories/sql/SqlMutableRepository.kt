@@ -55,8 +55,8 @@ abstract class SqlMutableRepository<Entity, PrimaryKey : Key>(
 
     override suspend fun insert(entity: Entity): Result<Entity, DbError> =
         mapDatabaseExceptions {
-            connection.sendPreparedStatement(
-                query = insertQuery,
+            connection.query(
+                sql = insertQuery,
                 values = table.entityEncoder(entity),
                 release = false,
             )
@@ -72,8 +72,8 @@ abstract class SqlMutableRepository<Entity, PrimaryKey : Key>(
                 entities.forEach { entity ->
                     results.add(
                         mapDatabaseExceptions {
-                            db.sendPreparedStatement(
-                                query = insertQuery,
+                            db.query(
+                                sql = insertQuery,
                                 values = table.entityEncoder(entity),
                                 release = false,
                             )
@@ -92,8 +92,8 @@ abstract class SqlMutableRepository<Entity, PrimaryKey : Key>(
 
     override suspend fun update(entity: Entity): Result<Entity, DbError> =
         mapDatabaseExceptions {
-            connection.sendPreparedStatement(
-                query = updateQuery,
+            connection.query(
+                sql = updateQuery,
                 values = table.entityEncoder(entity) + pk(entity).toList(),
                 release = false,
             )
@@ -103,8 +103,8 @@ abstract class SqlMutableRepository<Entity, PrimaryKey : Key>(
 
     override suspend fun delete(pk: PrimaryKey): Result<Entity, DbError> =
         mapDatabaseExceptions {
-            connection.sendPreparedStatement(
-                query = deleteQuery,
+            connection.query(
+                sql = deleteQuery,
                 values = pk.toList(),
                 release = false,
             )
@@ -114,12 +114,12 @@ abstract class SqlMutableRepository<Entity, PrimaryKey : Key>(
 
     override suspend fun clear(): Result<Long, DbError> =
         mapDatabaseExceptions {
-            connection.sendPreparedStatement(
-                query = clearQuery,
+            connection.update(
+                sql = clearQuery,
                 values = listOf(),
                 release = false,
             )
         }.andThen { result ->
-            Ok(result.rowsAffected)
+            Ok(result)
         }
 }

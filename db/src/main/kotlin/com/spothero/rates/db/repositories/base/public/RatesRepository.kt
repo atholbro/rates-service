@@ -1,4 +1,4 @@
-package com.spothero.rates.db.repositories.base._public
+package com.spothero.rates.db.repositories.base.public
 
 import com.github.michaelbull.result.Result
 import com.spothero.rates.db.models.Rate

@@ -30,7 +30,7 @@ class LotSqlRepository(
             LEFT JOIN test.space "s" ON l.id = s.lot_id
         """.trimIndent()
 
-        val result = connection.sendPreparedStatement(query)
+        val result = connection.query(query)
 
         return binding {
             result.rows.map {

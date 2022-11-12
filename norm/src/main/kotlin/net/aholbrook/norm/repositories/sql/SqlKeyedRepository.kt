@@ -22,8 +22,8 @@ abstract class SqlKeyedRepository<Entity, PrimaryKey : Key>(
 
     override suspend fun get(pk: PrimaryKey): Result<Entity, DbError> =
         mapDatabaseExceptions {
-            connection.sendPreparedStatement(
-                query = getQuery,
+            connection.query(
+                sql = getQuery,
                 values = pk.toList(),
                 release = false,
             )

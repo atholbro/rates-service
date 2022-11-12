@@ -7,8 +7,8 @@ import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.map
 import com.github.michaelbull.result.onSuccess
 import com.spothero.rates.db.models.Rate
-import com.spothero.rates.db.repositories.base._public.RateKey
-import com.spothero.rates.db.repositories.base._public.RatesRepository
+import com.spothero.rates.db.repositories.base.public.RateKey
+import com.spothero.rates.db.repositories.base.public.RatesRepository
 import io.kotest.inspectors.forAll
 import net.aholbrook.norm.DbError
 import net.aholbrook.norm.NoResults

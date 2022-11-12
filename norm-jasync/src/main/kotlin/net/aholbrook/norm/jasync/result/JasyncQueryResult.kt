@@ -1,4 +1,4 @@
-package net.aholbrook.norm.jasync.postgres.result
+package net.aholbrook.norm.jasync.result
 
 import net.aholbrook.norm.sql.result.QueryResult
 

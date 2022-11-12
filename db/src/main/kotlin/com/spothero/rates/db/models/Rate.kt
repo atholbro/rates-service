@@ -8,6 +8,7 @@ import net.aholbrook.norm.namedField
 import net.aholbrook.norm.sql.readValue
 import net.aholbrook.norm.sql.result.RowData
 import net.aholbrook.norm.table
+import net.aholbrook.norm.util.asEnum
 import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.ZoneId
@@ -23,8 +24,8 @@ data class Rate(
     var price: Int,
 ) {
     private fun encode(): List<Any?> = listOf(
-        rateGroup.toString(),
-        day.toString(),
+        rateGroup,
+        day.asEnum(),
         start,
         end,
         timeZone.toString(),

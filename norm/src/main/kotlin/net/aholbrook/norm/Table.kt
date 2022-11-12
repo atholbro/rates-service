@@ -10,13 +10,13 @@ data class Table<Entity>(
     val entityEncoder: (Entity) -> List<Any?>,
     val entityDecoder: (RowData, String) -> Result<Entity, DbError>,
 ) {
-    private lateinit var _fields: List<Field.Named<*>>
+    private lateinit var _fields: List<Field.Named>
 
-    val fields: Map<String, Field.Named<*>> by lazy {
+    val fields: Map<String, Field.Named> by lazy {
         _fields.associateBy { it.field }
     }
 
-    val primaryKeyFields: Map<String, Field.Named<*>> by lazy {
+    val primaryKeyFields: Map<String, Field.Named> by lazy {
         fields.filter { it.value.primaryKey }
     }
 
@@ -27,10 +27,10 @@ data class Table<Entity>(
         lateinit var name: String
         lateinit var entityDecoder: (RowData, String) -> Result<Entity, DbError>
         lateinit var entityEncoder: (Entity) -> List<Any?>
-        private val fields = mutableListOf<Field.Named<*>>()
+        val fields = mutableListOf<Field.Named>()
 
-        fun <ValueType> field(name: String, primaryKey: Boolean = false) {
-            fields.add(Field.Named<ValueType>(name, primaryKey = primaryKey))
+        inline fun <reified ValueType> field(name: String, primaryKey: Boolean = false) {
+            fields.add(Field.Named(name, primaryKey = primaryKey))
         }
 
         internal fun build(): Table<Entity> =

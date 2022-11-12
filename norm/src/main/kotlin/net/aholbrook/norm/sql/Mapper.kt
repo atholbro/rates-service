@@ -15,13 +15,44 @@ import net.aholbrook.norm.TooManyResults
 import net.aholbrook.norm.get
 import net.aholbrook.norm.sql.result.ResultSet
 import net.aholbrook.norm.sql.result.RowData
+import java.time.LocalTime
+
+abstract class Transformation<T : Any>(
+    val clazz: Class<T>,
+) {
+    abstract operator fun invoke(value: Any?): T?
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) { return true }
+        if (javaClass != other?.javaClass) { return false }
+
+        other as Transformation<*>
+
+        if (clazz != other.clazz) { return false }
+
+        return true
+    }
+
+    override fun hashCode(): Int = clazz.hashCode()
+}
+
+val transforms = mapOf<Class<*>, Map<Class<*>, Transformation<*>>>(
+    java.sql.Time::class.java to mapOf(
+        LocalTime::class.java to object : Transformation<LocalTime>(LocalTime::class.java) {
+            override fun invoke(value: Any?): LocalTime? =
+                (value as? java.sql.Time)?.toLocalTime()
+        }
+    )
+)
 
 inline fun <reified T> RowData.readValue(
     field: Field,
     transform: (Any) -> T? = { it as? T },
 ): Result<T, ColumnMappingError> {
     runCatching {
-        val value: Any? = field.get(this)
+        val value: Any? = field.get(this)?.let {
+            transforms[it::class.java]?.get(T::class.java)?.invoke(it) ?: it
+        }
 
         return if (value != null) {
             runCatching {

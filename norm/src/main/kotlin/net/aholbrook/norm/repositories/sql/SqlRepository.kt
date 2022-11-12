@@ -21,8 +21,8 @@ abstract class SqlRepository<Entity>(
 
     override suspend fun getAll(): Result<List<Entity>, DbError> =
         mapDatabaseExceptions {
-            connection.sendPreparedStatement(
-                query = getAllQuery,
+            connection.query(
+                sql = getAllQuery,
                 release = false,
             )
         }.andThen { result ->

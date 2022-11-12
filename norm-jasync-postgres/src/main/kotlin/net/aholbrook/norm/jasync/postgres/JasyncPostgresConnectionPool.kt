@@ -2,9 +2,10 @@ package net.aholbrook.norm.jasync.postgres
 
 import com.github.jasync.sql.db.asSuspending
 import com.github.jasync.sql.db.postgresql.PostgreSQLConnection
-import net.aholbrook.norm.jasync.postgres.result.JasyncQueryResult
-import net.aholbrook.norm.jasync.postgres.result.JasyncResultSet
-import net.aholbrook.norm.jasync.postgres.result.JasyncRowData
+import net.aholbrook.norm.jasync.JasyncConnection
+import net.aholbrook.norm.jasync.result.JasyncQueryResult
+import net.aholbrook.norm.jasync.result.JasyncResultSet
+import net.aholbrook.norm.jasync.result.JasyncRowData
 import net.aholbrook.norm.sql.Connection
 import net.aholbrook.norm.sql.SqlDatabaseConfig
 import net.aholbrook.norm.sql.result.QueryResult
@@ -22,15 +23,19 @@ class JasyncPostgresConnectionPool(
         }
     }
 
-    override suspend fun sendQuery(query: String): QueryResult<JasyncRowData, JasyncResultSet> =
-        JasyncQueryResult(pool.asSuspending.sendQuery(query))
-
-    override suspend fun sendPreparedStatement(
-        query: String,
+    override suspend fun query(
+        sql: String,
         values: List<Any?>,
         release: Boolean,
     ): QueryResult<JasyncRowData, JasyncResultSet> =
-        JasyncQueryResult(pool.asSuspending.sendPreparedStatement(query, values, release))
+        JasyncQueryResult(pool.asSuspending.sendPreparedStatement(sql, values, release))
+
+    override suspend fun update(
+        sql: String,
+        values: List<Any?>,
+        release: Boolean,
+    ): Long =
+        JasyncQueryResult(pool.asSuspending.sendPreparedStatement(sql, values, release)).rowsAffected
 
     override suspend fun <T> inTransaction(
         block: suspend (Connection<JasyncRowData, JasyncResultSet>) -> T,

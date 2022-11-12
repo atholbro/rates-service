@@ -1,7 +1,7 @@
 package com.spothero.rates.db.mock
 
 import com.spothero.rates.db.RatesServiceDb
-import com.spothero.rates.db.repositories.base._public.RatesRepository
+import com.spothero.rates.db.repositories.base.public.RatesRepository
 import com.spothero.rates.db.repositories.mock.RatesMockRepository
 
 class RatesServiceMockDb : RatesServiceDb {
