@@ -7,8 +7,8 @@ import net.aholbrook.norm.util.prependIfNotBlank
 data class Table<Entity>(
     val schema: String? = null,
     val name: String,
-    val entityEncoder: (Entity) -> List<Any?>,
-    val entityDecoder: (RowData, String) -> Result<Entity, DbError>,
+    val entityEncoder: (entity: Entity) -> List<Any?>,
+    val entityDecoder: (row: RowData, prefix: String) -> Result<Entity, DbError>,
 ) {
     private lateinit var _fields: List<Field.Named>
 
@@ -25,8 +25,8 @@ data class Table<Entity>(
     class Builder<Entity> {
         var schema: String? = null
         lateinit var name: String
-        lateinit var entityDecoder: (RowData, String) -> Result<Entity, DbError>
-        lateinit var entityEncoder: (Entity) -> List<Any?>
+        lateinit var entityEncoder: (entity: Entity) -> List<Any?>
+        lateinit var entityDecoder: (row: RowData, prefix: String) -> Result<Entity, DbError>
         val fields = mutableListOf<Field.Named>()
 
         inline fun <reified ValueType> field(name: String, primaryKey: Boolean = false) {

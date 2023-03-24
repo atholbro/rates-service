@@ -23,20 +23,11 @@ data class Rate(
     var timeZone: ZoneId,
     var price: Int,
 ) {
-    private fun encode(): List<Any?> = listOf(
-        rateGroup,
-        day.asEnum(),
-        start,
-        end,
-        timeZone.toString(),
-        price,
-    )
-
     companion object {
         val table: Table<Rate> = table {
             name = "rates"
 
-            entityEncoder = Rate::encode
+            entityEncoder = Companion::encode
             entityDecoder = Companion::decode
 
             field<UUID>("id", primaryKey = true)
@@ -46,6 +37,17 @@ data class Rate(
             field<LocalTime>("end")
             field<ZoneId>("timezone")
             field<Int>("price")
+        }
+
+        private fun encode(rate: Rate): List<Any?> = with(rate) {
+            listOf(
+                rateGroup,
+                day.asEnum(),
+                start,
+                end,
+                timeZone.toString(),
+                price,
+            )
         }
 
         private fun decode(row: RowData, prefix: String = ""): Result<Rate, DbError> = binding {

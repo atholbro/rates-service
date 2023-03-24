@@ -6,19 +6,21 @@ import net.aholbrook.norm.DbError
 import net.aholbrook.norm.models.Lot
 import net.aholbrook.norm.models.LotSpace
 import net.aholbrook.norm.models.Space
+import net.aholbrook.norm.repositories.MutableRepository
+import net.aholbrook.norm.repositories.SqlMutableRepository
+import net.aholbrook.norm.repositories.SqlRepository
 import net.aholbrook.norm.repositories.base.test.LotKey
+import net.aholbrook.norm.repositories.base.test.LotPrimaryKey
 import net.aholbrook.norm.repositories.base.test.LotRepository
-import net.aholbrook.norm.repositories.sql.SqlMutableRepository
 import net.aholbrook.norm.sql.Connection
 import net.aholbrook.norm.sql.aliased
 
 class LotSqlRepository(
     connection: Connection<*, *>,
-) : SqlMutableRepository<Lot, LotKey>(connection, Lot.table),
+    private val repository: SqlRepository<Lot> = SqlRepository(connection, Lot.table),
+) : MutableRepository<Lot, LotKey> by SqlMutableRepository(repository, LotPrimaryKey),
     LotRepository {
-    override fun pk(entity: Lot) = LotKey(entity.id)
-
-    override suspend fun getAllWithSpaces(): Result<List<LotSpace>, DbError> {
+    override suspend fun getAllWithSpaces(): Result<List<LotSpace>, DbError> = with(repository) {
         val lotFields = table.fields.values
         val spaceFields = Space.table.fields.values
 
@@ -33,9 +35,7 @@ class LotSqlRepository(
         val result = connection.query(query)
 
         return binding {
-            result.rows.map {
-                LotSpace.decode(it).bind()
-            }
+            result.rows.map { LotSpace.decode(it).bind() }
         }
     }
 }

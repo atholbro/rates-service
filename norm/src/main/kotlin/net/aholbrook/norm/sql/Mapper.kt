@@ -5,6 +5,7 @@ import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.mapError
 import com.github.michaelbull.result.mapResult
 import com.github.michaelbull.result.runCatching
+import net.aholbrook.norm.ColumnError
 import net.aholbrook.norm.ColumnMappingError
 import net.aholbrook.norm.ColumnNotFound
 import net.aholbrook.norm.ColumnWrongType
@@ -48,7 +49,7 @@ val transforms = mapOf<Class<*>, Map<Class<*>, Transformation<*>>>(
 inline fun <reified T> RowData.readValue(
     field: Field,
     transform: (Any) -> T? = { it as? T },
-): Result<T, ColumnMappingError> {
+): Result<T, ColumnError> {
     runCatching {
         val value: Any? = field.get(this)?.let {
             transforms[it::class.java]?.get(T::class.java)?.invoke(it) ?: it

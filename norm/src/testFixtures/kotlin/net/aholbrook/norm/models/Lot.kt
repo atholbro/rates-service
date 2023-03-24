@@ -14,20 +14,20 @@ data class Lot(
     val id: UUID = DEFAULT_UUID_FOR_INSERTS,
     var address: String
 ) {
-    private fun encode(): List<Any?> = listOf(
-        address
-    )
-
     companion object {
         val table: Table<Lot> = table {
             schema = "test"
             name = "lot"
 
-            entityEncoder = Lot::encode
+            entityEncoder = Companion::encode
             entityDecoder = Companion::decode
 
             field<UUID>("id", primaryKey = true)
             field<String>("address")
+        }
+
+        private fun encode(lot: Lot): List<Any?> = with(lot) {
+            listOf(address)
         }
 
         private fun decode(row: RowData, prefix: String = ""): Result<Lot, DbError> = binding {

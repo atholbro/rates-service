@@ -19,24 +19,28 @@ object TooManyResults : DbError {
     override fun toString() = "Too many results"
 }
 
-open class ColumnMappingError(
-    val column: Field,
+interface ColumnError : DbError {
+    val column: Field
+}
+
+class ColumnMappingError(
+    override val column: Field,
     val throwable: Throwable? = null,
-) : DbError {
+) : ColumnError {
     override fun toString() = "column \"$column\" mapping failed ${throwable?.message}"
 }
 
 class ColumnNotFound(
-    column: Field,
-) : ColumnMappingError(column) {
+    override val column: Field,
+) : ColumnError {
     override fun toString() = "column \"$column\" not found"
 }
 
 class ColumnWrongType(
-    column: Field,
+    override val column: Field,
     val expectedType: KClass<*>,
     val actualType: KClass<*>,
-) : ColumnMappingError(column) {
+) : ColumnError {
     override fun toString() = "column \"$column\" expected $expectedType but found $actualType"
 }
 

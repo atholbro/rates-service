@@ -14,21 +14,21 @@ data class CompoundKeyTest(
     val part2: Int,
     var `val`: String,
 ) {
-    private fun encode(): List<Any?> = listOf(
-        `val`
-    )
-
     companion object {
         val table: Table<CompoundKeyTest> = table {
             schema = "test"
             name = "compound_key_test"
 
-            entityEncoder = CompoundKeyTest::encode
+            entityEncoder = Companion::encode
             entityDecoder = Companion::decode
 
             field<Int>("part1", primaryKey = true)
             field<Int>("part2", primaryKey = true)
             field<String>("val")
+        }
+
+        private fun encode(compoundKeyTest: CompoundKeyTest): List<Any?> = with (compoundKeyTest) {
+            listOf(`val`)
         }
 
         private fun decode(row: RowData, prefix: String = ""): Result<CompoundKeyTest, DbError> = binding {

@@ -16,22 +16,23 @@ data class Space(
     val lotId: UUID,
     val number: String?,
 ) {
-    private fun encode(): List<Any?> = listOf(
-        lotId,
-        number,
-    )
+
 
     companion object {
         val table: Table<Space> = table {
             schema = "test"
             name = "space"
 
-            entityEncoder = Space::encode
+            entityEncoder = Companion::encode
             entityDecoder = Companion::decode
 
             field<UUID>("id", primaryKey = true)
             field<UUID>("lot_id")
             field<String?>("number")
+        }
+
+        private fun encode(space: Space): List<Any?> = with(space) {
+            listOf(lotId, number)
         }
 
         private fun decode(row: RowData, prefix: String = ""): Result<Space, DbError> = binding {
